@@ -1,6 +1,8 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.5.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id "com.jfrog.bintray" version "1.7.3"
+    id "maven-publish"
+    id 'java'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -10,36 +12,97 @@ version = '1.0'
 sourceCompatibility = '1.8'
 
 repositories {
-	mavenCentral()
-	jcenter()
+    mavenCentral()
+    jcenter()
 }
 
 test {
-	useJUnitPlatform ()
+    useJUnitPlatform()
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 dependencies {
 
 
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'            // JPA is the way
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'            // JPA is the way
 
-	implementation 'org.hibernate:hibernate-search-orm:5.11.1.Final'                // Hibernate Search
-	implementation 'org.hibernate:hibernate-core:5.4.2.Final'                       // Hibernate Search
+    implementation 'org.hibernate:hibernate-search-orm:5.11.1.Final'                // Hibernate Search
+    implementation 'org.hibernate:hibernate-core:5.4.2.Final'                       // Hibernate Search
 
-	annotationProcessor 'org.projectlombok:lombok'                                    // Why is this here
-	compileOnly 'org.projectlombok:lombok'                                            // Lombok for compile
+    annotationProcessor 'org.projectlombok:lombok'                                    // Why is this here
+    compileOnly 'org.projectlombok:lombok'                                            // Lombok for compile
 
-	// Test
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'            // t.e.s.t.i.f.y
-	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.1'                    // JUNIT 5
-	testRuntime 'org.junit.platform:junit-platform-launcher:1.4.1'                    // JUNIT 5
-	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.1'                        // JUNIT 5
-	testRuntime 'com.h2database:h2'                                                // Data ain't storing itself
+    // Test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'            // t.e.s.t.i.f.y
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.1'                    // JUNIT 5
+    testRuntime 'org.junit.platform:junit-platform-launcher:1.4.1'                    // JUNIT 5
+    testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.1'                        // JUNIT 5
+    testRuntime 'com.h2database:h2'                                                // Data ain't storing itself
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc.failOnError = false
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "vossenv"
+            name "Danimae Vossen"
+            email "vossen.dm@gmail.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/vossenv/search"
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId 'com.dm'
+            artifactId 'search'
+            version '1.0.0'
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Combine with Lucene')
+                root.appendNode('name', 'Search Processor')
+                root.appendNode('url', 'https://github.com/vossenv/search')
+                root.children().last() + pomConfig
+            }
+        }
+    }
 }
