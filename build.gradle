@@ -28,7 +28,7 @@ dependencies {
 
 
 	implementation 'org.springframework.boot:spring-boot-starter'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'            // JPA is the way
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'            // JPA is the way
 
 	implementation 'org.hibernate:hibernate-search-orm:5.11.1.Final'                // Hibernate Search
 	implementation 'org.hibernate:hibernate-core:5.4.2.Final'                       // Hibernate Search
@@ -41,4 +41,5 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.1'                    // JUNIT 5
 	testRuntime 'org.junit.platform:junit-platform-launcher:1.4.1'                    // JUNIT 5
 	testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.1'                        // JUNIT 5
+	testRuntime 'com.h2database:h2'                                                // Data ain't storing itself
 }
