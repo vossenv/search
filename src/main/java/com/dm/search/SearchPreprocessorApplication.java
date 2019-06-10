@@ -1,4 +1,4 @@
-package com.dm.searchpreprocessor.searchpreprocessor;
+package com.dm.search;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
